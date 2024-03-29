@@ -1,301 +1,309 @@
-|Banner|
-
-`Website <https://dvc.org>`_
-• `Docs <https://dvc.org/doc>`_
-• `Blog <http://blog.dataversioncontrol.com>`_
-• `Tutorial <https://dvc.org/doc/get-started>`_
-• `Related Technologies <https://dvc.org/doc/user-guide/related-technologies>`_
-• `How DVC works`_
-• `VS Code Extension`_
-• `Installation`_
-• `Contributing`_
-• `Community and Support`_
-
-|CI| |Python Version| |Coverage| |VS Code| |DOI|
-
-|PyPI| |PyPI Downloads| |Packages| |Brew| |Conda| |Choco| |Snap|
-
-|
-
-**Data Version Control** or **DVC** is a command line tool and `VS Code Extension`_ to help you develop reproducible machine learning projects:
-
-#. **Version** your data and models.
-   Store them in your cloud storage but keep their version info in your Git repo.
-
-#. **Iterate** fast with lightweight pipelines.
-   When you make changes, only run the steps impacted by those changes.
-
-#. **Track** experiments in your local Git repo (no servers needed).
-
-#. **Compare** any data, code, parameters, model, or performance plots.
-
-#. **Share** experiments and automatically reproduce anyone's experiment.
-
-Quick start
-===========
-
-    Please read our `Command Reference <https://dvc.org/doc/command-reference>`_ for a complete list.
-
-A common CLI workflow includes:
-
-
-+-----------------------------------+----------------------------------------------------------------------------------------------------+
-| Task                              | Terminal                                                                                           |
-+===================================+====================================================================================================+
-| Track data                        | | ``$ git add train.py params.yaml``                                                               |
-|                                   | | ``$ dvc add images/``                                                                            |
-+-----------------------------------+----------------------------------------------------------------------------------------------------+
-| Connect code and data             | | ``$ dvc stage add -n featurize -d images/ -o features/ python featurize.py``                     |
-|                                   | | ``$ dvc stage add -n train -d features/ -d train.py -o model.p -M metrics.json python train.py`` |
-+-----------------------------------+----------------------------------------------------------------------------------------------------+
-| Make changes and experiment       | | ``$ dvc exp run -n exp-baseline``                                                                |
-|                                   | | ``$ vi train.py``                                                                                |
-|                                   | | ``$ dvc exp run -n exp-code-change``                                                             |
-+-----------------------------------+----------------------------------------------------------------------------------------------------+
-| Compare and select experiments    | | ``$ dvc exp show``                                                                               |
-|                                   | | ``$ dvc exp apply exp-baseline``                                                                 |
-+-----------------------------------+----------------------------------------------------------------------------------------------------+
-| Share code                        | | ``$ git add .``                                                                                  |
-|                                   | | ``$ git commit -m 'The baseline model'``                                                         |
-|                                   | | ``$ git push``                                                                                   |
-+-----------------------------------+----------------------------------------------------------------------------------------------------+
-| Share data and ML models          | | ``$ dvc remote add myremote -d s3://mybucket/image_cnn``                                         |
-|                                   | | ``$ dvc push``                                                                                   |
-+-----------------------------------+----------------------------------------------------------------------------------------------------+
-
-How DVC works
-=============
-
-    We encourage you to read our `Get Started
-    <https://dvc.org/doc/get-started>`_ docs to better understand what DVC
-    does and how it can fit your scenarios.
-
-The closest *analogies* to describe the main DVC features are these:
-
-#. **Git for data**: Store and share data artifacts (like Git-LFS but without a server) and models, connecting them with a Git repository. Data management meets GitOps!
-#. **Makefiles** for ML: Describes how data or model artifacts are built from other data and code in a standard format. Now you can version your data pipelines with Git.
-#. Local **experiment tracking**: Turn your machine into an ML experiment management platform, and collaborate with others using existing Git hosting (Github, Gitlab, etc.).
-
-Git is employed as usual to store and version code (including DVC meta-files as placeholders for data).
-DVC `stores data and model files <https://dvc.org/doc/start/data-management>`_ seamlessly in a cache outside of Git, while preserving almost the same user experience as if they were in the repo.
-To share and back up the *data cache*, DVC supports multiple remote storage platforms - any cloud (S3, Azure, Google Cloud, etc.) or on-premise network storage (via SSH, for example).
-
-|Flowchart|
-
-`DVC pipelines <https://dvc.org/doc/start/data-management/data-pipelines>`_ (computational graphs) connect code and data together.
-They specify all steps required to produce a model: input dependencies including code, data, commands to run; and output information to be saved.
-
-Last but not least, `DVC Experiment Versioning <https://dvc.org/doc/start/experiments>`_ lets you prepare and run a large number of experiments.
-Their results can be filtered and compared based on hyperparameters and metrics, and visualized with multiple plots.
-
-.. _`VS Code Extension`:
-
-VS Code Extension
-=================
-
-|VS Code|
-
-To use DVC as a GUI right from your VS Code IDE, install the `DVC Extension <https://marketplace.visualstudio.com/items?itemName=Iterative.dvc>`_ from the Marketplace.
-It currently features experiment tracking and data management, and more features (data pipeline support, etc.) are coming soon!
-
-|VS Code Extension Overview|
-
-    Note: You'll have to install core DVC on your system separately (as detailed
-    below). The Extension will guide you if needed.
-
-Installation
-============
-
-There are several ways to install DVC: in VS Code; using ``snap``, ``choco``, ``brew``, ``conda``, ``pip``; or with an OS-specific package.
-Full instructions are `available here <https://dvc.org/doc/get-started/install>`_.
-
-Snapcraft (Linux)
------------------
-
-|Snap|
-
-.. code-block:: bash
-
-   snap install dvc --classic
-
-This corresponds to the latest tagged release.
-Add ``--beta`` for the latest tagged release candidate, or ``--edge`` for the latest ``main`` version.
-
-Chocolatey (Windows)
---------------------
-
-|Choco|
-
-.. code-block:: bash
-
-   choco install dvc
-
-Brew (mac OS)
--------------
-
-|Brew|
-
-.. code-block:: bash
-
-   brew install dvc
-
-Anaconda (Any platform)
------------------------
-
-|Conda|
-
-.. code-block:: bash
-
-   conda install -c conda-forge mamba # installs much faster than conda
-   mamba install -c conda-forge dvc
-
-Depending on the remote storage type you plan to use to keep and share your data, you might need to install optional dependencies: `dvc-s3`, `dvc-azure`, `dvc-gdrive`, `dvc-gs`, `dvc-oss`, `dvc-ssh`.
-
-PyPI (Python)
--------------
-
-|PyPI|
-
-.. code-block:: bash
-
-   pip install dvc
-
-Depending on the remote storage type you plan to use to keep and share your data, you might need to specify one of the optional dependencies: ``s3``, ``gs``, ``azure``, ``oss``, ``ssh``. Or ``all`` to include them all.
-The command should look like this: ``pip install 'dvc[s3]'`` (in this case AWS S3 dependencies such as ``boto3`` will be installed automatically).
-
-To install the development version, run:
-
-.. code-block:: bash
-
-   pip install git+git://github.com/iterative/dvc
-
-Package (Platform-specific)
----------------------------
-
-|Packages|
-
-Self-contained packages for Linux, Windows, and Mac are available.
-The latest version of the packages can be found on the GitHub `releases page <https://github.com/iterative/dvc/releases>`_.
-
-Ubuntu / Debian (deb)
-^^^^^^^^^^^^^^^^^^^^^
-.. code-block:: bash
-
-   sudo wget https://dvc.org/deb/dvc.list -O /etc/apt/sources.list.d/dvc.list
-   wget -qO - https://dvc.org/deb/iterative.asc | sudo apt-key add -
-   sudo apt update
-   sudo apt install dvc
-
-Fedora / CentOS (rpm)
-^^^^^^^^^^^^^^^^^^^^^
-.. code-block:: bash
-
-   sudo wget https://dvc.org/rpm/dvc.repo -O /etc/yum.repos.d/dvc.repo
-   sudo rpm --import https://dvc.org/rpm/iterative.asc
-   sudo yum update
-   sudo yum install dvc
-
-Contributing
-============
-
-|Maintainability|
-
-Contributions are welcome!
-Please see our `Contributing Guide <https://dvc.org/doc/user-guide/contributing/core>`_ for more details.
-Thanks to all our contributors!
-
-|Contribs|
-
-Community and Support
-=====================
-
-* `Twitter <https://twitter.com/DVCorg>`_
-* `Forum <https://discuss.dvc.org/>`_
-* `Discord Chat <https://dvc.org/chat>`_
-* `Email <mailto:support@dvc.org>`_
-* `Mailing List <https://sweedom.us10.list-manage.com/subscribe/post?u=a08bf93caae4063c4e6a351f6&id=24c0ecc49a>`_
-
-Copyright
-=========
-
-This project is distributed under the Apache license version 2.0 (see the LICENSE file in the project root).
-
-By submitting a pull request to this project, you agree to license your contribution under the Apache license version 2.0 to this project.
-
-Citation
-========
-
-|DOI|
-
-Iterative, *DVC: Data Version Control - Git for Data & Models* (2020)
-`DOI:10.5281/zenodo.012345 <https://doi.org/10.5281/zenodo.3677553>`_.
-
-Barrak, A., Eghan, E.E. and Adams, B. `On the Co-evolution of ML Pipelines and Source Code - Empirical Study of DVC Projects <https://mcis.cs.queensu.ca/publications/2021/saner.pdf>`_ , in Proceedings of the 28th IEEE International Conference on Software Analysis, Evolution, and Reengineering, SANER 2021. Hawaii, USA.
-
-
-.. |Banner| image:: https://dvc.org/img/logo-github-readme.png
-   :target: https://dvc.org
-   :alt: DVC logo
-
-.. |VS Code Extension Overview| image:: https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif
-   :alt: DVC Extension for VS Code
-
-.. |CI| image:: https://github.com/iterative/dvc/workflows/Tests/badge.svg?branch=main
-   :target: https://github.com/iterative/dvc/actions
-   :alt: GHA Tests
-
-.. |Maintainability| image:: https://codeclimate.com/github/iterative/dvc/badges/gpa.svg
-   :target: https://codeclimate.com/github/iterative/dvc
-   :alt: Code Climate
-
-.. |Python Version| image:: https://img.shields.io/pypi/pyversions/dvc
-   :target: https://pypi.org/project/dvc
-   :alt: Python Version
-
-.. |Coverage| image:: https://codecov.io/gh/iterative/dvc/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/iterative/dvc
-   :alt: Codecov
-
-.. |Snap| image:: https://img.shields.io/badge/snap-install-82BEA0.svg?logo=snapcraft
-   :target: https://snapcraft.io/dvc
-   :alt: Snapcraft
-
-.. |Choco| image:: https://img.shields.io/chocolatey/v/dvc?label=choco
-   :target: https://chocolatey.org/packages/dvc
-   :alt: Chocolatey
-
-.. |Brew| image:: https://img.shields.io/homebrew/v/dvc?label=brew
-   :target: https://formulae.brew.sh/formula/dvc
-   :alt: Homebrew
-
-.. |Conda| image:: https://img.shields.io/conda/v/conda-forge/dvc.svg?label=conda&logo=conda-forge
-   :target: https://anaconda.org/conda-forge/dvc
-   :alt: Conda-forge
-
-.. |PyPI| image:: https://img.shields.io/pypi/v/dvc.svg?label=pip&logo=PyPI&logoColor=white
-   :target: https://pypi.org/project/dvc
-   :alt: PyPI
-
-.. |PyPI Downloads| image:: https://img.shields.io/pypi/dm/dvc.svg?color=blue&label=Downloads&logo=pypi&logoColor=gold
-   :target: https://pypi.org/project/dvc
-   :alt: PyPI Downloads
-
-.. |Packages| image:: https://img.shields.io/badge/deb|pkg|rpm|exe-blue
-   :target: https://dvc.org/doc/install
-   :alt: deb|pkg|rpm|exe
-
-.. |DOI| image:: https://img.shields.io/badge/DOI-10.5281/zenodo.3677553-blue.svg
-   :target: https://doi.org/10.5281/zenodo.3677553
-   :alt: DOI
-
-.. |Flowchart| image:: https://dvc.org/img/flow.gif
-   :target: https://dvc.org/img/flow.gif
-   :alt: how_dvc_works
-
-.. |Contribs| image:: https://contrib.rocks/image?repo=iterative/dvc
-   :target: https://github.com/iterative/dvc/graphs/contributors
-   :alt: Contributors
-
-.. |VS Code| image:: https://img.shields.io/visual-studio-marketplace/v/Iterative.dvc?color=blue&label=VSCode&logo=visualstudiocode&logoColor=blue
-   :target: https://marketplace.visualstudio.com/items?itemName=Iterative.dvc
-   :alt: VS Code Extension
+<div class="Box-sc-g0xbh4-0 bJMeLZ js-snippet-clipboard-copy-unpositioned" data-hpc="true"><article class="markdown-body entry-content container-lg" itemprop="text"><p dir="auto"><a href="https://dvc.org" rel="nofollow"><img alt="DVC标志" src="https://camo.githubusercontent.com/7b353ba916e041b4682c187851b808fff7143f40031eb7a6422ba84f3f1abee9/68747470733a2f2f6476632e6f72672f696d672f6c6f676f2d6769746875622d726561646d652e706e67" data-canonical-src="https://dvc.org/img/logo-github-readme.png" style="max-width: 100%;"></a></p>
+<p dir="auto"><a href="https://dvc.org" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">网站</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+•</font></font><a href="https://dvc.org/doc" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">文档</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+•</font></font><a href="http://blog.dataversioncontrol.com" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">博客</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+•</font></font><a href="https://dvc.org/doc/get-started" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">教程</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+•</font></font><a href="https://dvc.org/doc/user-guide/related-technologies" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">相关技术</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+• </font></font><a href="#how-dvc-works"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DVC 工作原理</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+• </font></font><a href="#vs-code-extension"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">VS 代码扩展</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+•</font></font><a href="#installation"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">安装</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+•</font></font><a href="#contributing"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">贡献</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+•</font></font><a href="#community-and-support"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">社区和支持</font></font></a></p>
+<p dir="auto"><a href="https://github.com/iterative/dvc/actions"><img alt="全球HA测试" src="https://github.com/iterative/dvc/workflows/Tests/badge.svg?branch=main" style="max-width: 100%;"></a> <a href="https://pypi.org/project/dvc" rel="nofollow"><img alt="Python版本" src="https://camo.githubusercontent.com/c7a157e2cd807aaf862a4b7214c1d2bd8cebc149c263557da90b2d203ceff930/68747470733a2f2f696d672e736869656c64732e696f2f707970692f707976657273696f6e732f647663" data-canonical-src="https://img.shields.io/pypi/pyversions/dvc" style="max-width: 100%;"></a> <a href="https://codecov.io/gh/iterative/dvc" rel="nofollow"><img alt="代码科夫" src="https://camo.githubusercontent.com/8715da72e3848a285c223ac40368c8b2001f4d86734e7b1cc62f0a18c0f9df8c/68747470733a2f2f636f6465636f762e696f2f67682f6974657261746976652f6476632f6272616e63682f6d61696e2f67726170682f62616467652e737667" data-canonical-src="https://codecov.io/gh/iterative/dvc/branch/main/graph/badge.svg" style="max-width: 100%;">
+</a> <a href="https://marketplace.visualstudio.com/items?itemName=Iterative.dvc" rel="nofollow"><img alt="VS 代码扩展" src="https://camo.githubusercontent.com/3daaa337cd713b3bee35ca81381ef1473b2d6f5ed3e0f96283c7687c73b59def/68747470733a2f2f696d672e736869656c64732e696f2f76697375616c2d73747564696f2d6d61726b6574706c6163652f762f4974657261746976652e6476633f636f6c6f723d626c7565266c6162656c3d5653436f6465266c6f676f3d76697375616c73747564696f636f6465266c6f676f436f6c6f723d626c7565" data-canonical-src="https://img.shields.io/visual-studio-marketplace/v/Iterative.dvc?color=blue&amp;label=VSCode&amp;logo=visualstudiocode&amp;logoColor=blue" style="max-width: 100%;"></a> <a href="https://doi.org/10.5281/zenodo.3677553" rel="nofollow"><img alt="DOI" src="https://camo.githubusercontent.com/0350534562328e569f6c577f31a818ca777d9cbdd38f3fb5c1c80d9e6f0fea7e/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f444f492d31302e353238312f7a656e6f646f2e333637373535332d626c75652e737667" data-canonical-src="https://img.shields.io/badge/DOI-10.5281/zenodo.3677553-blue.svg" style="max-width: 100%;">
+</a></p>
+<p dir="auto"><a href="https://pypi.org/project/dvc" rel="nofollow"><img alt="皮伊" src="https://camo.githubusercontent.com/bfb4e41fb4f3ee133a761a16296e6dae1da8f56681e0fd54a4069eee64add0c3/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f6476632e7376673f6c6162656c3d706970266c6f676f3d50795049266c6f676f436f6c6f723d7768697465" data-canonical-src="https://img.shields.io/pypi/v/dvc.svg?label=pip&amp;logo=PyPI&amp;logoColor=white" style="max-width: 100%;"></a> <a href="https://pypi.org/project/dvc" rel="nofollow"><img alt="PyPI 下载" src="https://camo.githubusercontent.com/212368a2223dc001b9a2e025ea938d3d9ed5efe49efc6fb324752af003b608da/68747470733a2f2f696d672e736869656c64732e696f2f707970692f646d2f6476632e7376673f636f6c6f723d626c7565266c6162656c3d446f776e6c6f616473266c6f676f3d70797069266c6f676f436f6c6f723d676f6c64" data-canonical-src="https://img.shields.io/pypi/dm/dvc.svg?color=blue&amp;label=Downloads&amp;logo=pypi&amp;logoColor=gold" style="max-width: 100%;"></a> <a href="https://dvc.org/doc/install" rel="nofollow"><img alt="deb|pkg|rpm|exe" src="https://camo.githubusercontent.com/ccabd4c7fba32a335d8c4b994ca7ca91251a8d2700dfa55b7cfc873b721ed211/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6465627c706b677c72706d7c6578652d626c7565" data-canonical-src="https://img.shields.io/badge/deb|pkg|rpm|exe-blue" style="max-width: 100%;"></a> <a href="https://formulae.brew.sh/formula/dvc" rel="nofollow"><img alt="自制" src="https://camo.githubusercontent.com/45a6a79188da997b91b90c51bf832089f052b99c995ff240a650ab7175e3eb8b/68747470733a2f2f696d672e736869656c64732e696f2f686f6d65627265772f762f6476633f6c6162656c3d62726577" data-canonical-src="https://img.shields.io/homebrew/v/dvc?label=brew" style="max-width: 100%;"></a> <a href="https://anaconda.org/conda-forge/dvc" rel="nofollow"><img alt="康达锻造" src="https://camo.githubusercontent.com/920e3217cc0ffb61ac9ac639cd9377eeca8a3d9c3697971585ba0fea1850a7b7/68747470733a2f2f696d672e736869656c64732e696f2f636f6e64612f762f636f6e64612d666f7267652f6476632e7376673f6c6162656c3d636f6e6461266c6f676f3d636f6e64612d666f726765" data-canonical-src="https://img.shields.io/conda/v/conda-forge/dvc.svg?label=conda&amp;logo=conda-forge" style="max-width: 100%;"></a> <a href="https://chocolatey.org/packages/dvc" rel="nofollow"><img alt="巧克力味" src="https://camo.githubusercontent.com/b945daacb7f0c1e0c48903fa1a4a60af6e50da523f40b1775695a572a4b656ba/68747470733a2f2f696d672e736869656c64732e696f2f63686f636f6c617465792f762f6476633f6c6162656c3d63686f636f" data-canonical-src="https://img.shields.io/chocolatey/v/dvc?label=choco" style="max-width: 100%;"></a> <a href="https://snapcraft.io/dvc" rel="nofollow"><img alt="Snapcraft" src="https://camo.githubusercontent.com/0a898e4a3d84a2ef16c587236f22d4b241f12532606f14dc06f27c1886e776d9/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f736e61702d696e7374616c6c2d3832424541302e7376673f6c6f676f3d736e61706372616674" data-canonical-src="https://img.shields.io/badge/snap-install-82BEA0.svg?logo=snapcraft" style="max-width: 100%;"></a></p>
+<div dir="auto">
+<div dir="auto"><br></div>
+</div>
+<p dir="auto"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">数据版本控制</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">或</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DVC</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">是一个命令行工具和</font></font><a href="#vs-code-extension"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">VS Code 扩展</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，可帮助您开发可重复的机器学习项目：</font></font></p>
+<ol dir="auto">
+<li><strong><font style="vertical-align: inherit;"></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对您的数据和模型</font><strong><font style="vertical-align: inherit;">进行版本控制</font></strong><font style="vertical-align: inherit;">。将它们存储在您的云存储中，但将其版本信息保留在您的 Git 存储库中。</font></font></li>
+<li><strong><font style="vertical-align: inherit;"></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用轻量级管道快速</font><strong><font style="vertical-align: inherit;">迭代</font></strong><font style="vertical-align: inherit;">。当您进行更改时，仅运行受这些更改影响的步骤。</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">跟踪</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">本地 Git 存储库中的实验（无需服务器）。</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">比较</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">任何数据、代码、参数、模型或性能图。</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">共享</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">实验并自动重现任何人的实验。</font></font></li>
+</ol>
+<a name="user-content-quick-start"></a>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">快速开始</font></font></h2><a id="user-content-quick-start" class="anchor" aria-label="永久链接：快速入门" href="#quick-start"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<blockquote><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+请阅读我们的</font></font><a href="https://dvc.org/doc/command-reference" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令参考</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">以获取完整列表。</font></font></blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">常见的 CLI 工作流程包括：</font></font></p>
+<table>
+
+
+
+
+<thead valign="bottom">
+<tr><th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">任务</font></font></th>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">终端</font></font></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">追踪数据</font></font></td>
+<td><div dir="auto">
+<div dir="auto"><code>$ git add train.py params.yaml</code></div>
+<div dir="auto"><code>$ dvc add images/</code></div>
+</div>
+</td>
+</tr>
+<tr><td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">连接代码和数据</font></font></td>
+<td><div dir="auto">
+<div dir="auto"><code>$ dvc stage add -n featurize -d images/ -o features/ python featurize.py</code></div>
+<div dir="auto"><code>$ dvc stage add -n train -d features/ -d train.py -o model.p -M metrics.json python train.py</code></div>
+</div>
+</td>
+</tr>
+<tr><td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">做出改变并进行实验</font></font></td>
+<td><div dir="auto">
+<div dir="auto"><code>$ dvc exp run -n exp-baseline</code></div>
+<div dir="auto"><code>$ vi train.py</code></div>
+<div dir="auto"><code>$ dvc exp run -n exp-code-change</code></div>
+</div>
+</td>
+</tr>
+<tr><td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">比较和选择实验</font></font></td>
+<td><div dir="auto">
+<div dir="auto"><code>$ dvc exp show</code></div>
+<div dir="auto"><code>$ dvc exp apply exp-baseline</code></div>
+</div>
+</td>
+</tr>
+<tr><td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">分享代码</font></font></td>
+<td><div dir="auto">
+<div dir="auto"><code>$ git add .</code></div>
+<div dir="auto"><code>$ git commit -m 'The baseline model'</code></div>
+<div dir="auto"><code>$ git push</code></div>
+</div>
+</td>
+</tr>
+<tr><td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">共享数据和机器学习模型</font></font></td>
+<td><div dir="auto">
+<div dir="auto"><code>$ dvc remote add myremote -d s3://mybucket/image_cnn</code></div>
+<div dir="auto"><code>$ dvc push</code></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="user-content-how-dvc-works"></a>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DVC 的工作原理</font></font></h2><a id="user-content-how-dvc-works" class="anchor" aria-label="永久链接：DVC 的工作原理" href="#how-dvc-works"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<blockquote><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+我们鼓励您阅读我们的</font></font><a href="https://dvc.org/doc/get-started" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">入门</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">文档，以更好地了解 DVC 的用途以及它如何适合您的场景。</font></font></blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">描述 DVC 主要功能的</font><font style="vertical-align: inherit;">最接近的</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">类比如下：</font></font></em><font style="vertical-align: inherit;"></font></p>
+<ol dir="auto">
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Git for data</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：存储和共享数据工件（如 Git-LFS，但没有服务器）和模型，并将它们与 Git 存储库连接。数据管理遇上 GitOps！</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">用于 ML 的Makefile</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：描述如何以标准格式从其他数据和代码构建数据或模型工件。现在您可以使用 Git 对数据管道进行版本控制。</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">本地</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">实验跟踪</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：将您的机器变成机器学习实验管理平台，并使用现有的 Git 托管（Github、Gitlab 等）与其他人协作。</font></font></li>
+</ol>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">像往常一样使用 Git 来存储和版本代码（包括作为数据占位符的 DVC 元文件）。 DVC</font></font><a href="https://dvc.org/doc/start/data-management" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">将数据和模型文件</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">无缝存储在 Git 外部的缓存中，同时保留与存储库中几乎相同的用户体验。为了共享和备份</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">数据缓存</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，DVC 支持多个远程存储平台 - 任何云（S3、Azure、Google Cloud 等）或本地网络存储（例如通过 SSH）。</font></font></p>
+<p dir="auto"><animated-image data-catalyst=""><a href="https://dvc.org/img/flow.gif" rel="nofollow" data-target="animated-image.originalLink"><img alt="dvc 工作原理" src="https://camo.githubusercontent.com/ab63e023438880d76200b9eb966f8acf0a7e6bf59e23a162e38caceeb20ae324/68747470733a2f2f6476632e6f72672f696d672f666c6f772e676966" data-canonical-src="https://dvc.org/img/flow.gif" style="max-width: 100%; display: inline-block;" data-target="animated-image.originalImage"></a>
+      <span class="AnimatedImagePlayer" data-target="animated-image.player" hidden="">
+        <a data-target="animated-image.replacedLink" class="AnimatedImagePlayer-images" href="https://dvc.org/img/flow.gif" target="_blank">
+          
+        <span data-target="animated-image.imageContainer">
+            <img data-target="animated-image.replacedImage" alt="how_dvc_works" class="AnimatedImagePlayer-animatedImage" src="https://camo.githubusercontent.com/ab63e023438880d76200b9eb966f8acf0a7e6bf59e23a162e38caceeb20ae324/68747470733a2f2f6476632e6f72672f696d672f666c6f772e676966" style="display: block; opacity: 1;">
+          <canvas class="AnimatedImagePlayer-stillImage" aria-hidden="true" width="814" height="326"></canvas></span></a>
+        <button data-target="animated-image.imageButton" class="AnimatedImagePlayer-images" tabindex="-1" aria-label="Play how_dvc_works" hidden=""></button>
+        <span class="AnimatedImagePlayer-controls" data-target="animated-image.controls" hidden="">
+          <button data-target="animated-image.playButton" class="AnimatedImagePlayer-button" aria-label="Play how_dvc_works">
+            <svg aria-hidden="true" focusable="false" class="octicon icon-play" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 13.5427V2.45734C4 1.82607 4.69692 1.4435 5.2295 1.78241L13.9394 7.32507C14.4334 7.63943 14.4334 8.36057 13.9394 8.67493L5.2295 14.2176C4.69692 14.5565 4 14.1739 4 13.5427Z">
+            </path></svg>
+            <svg aria-hidden="true" focusable="false" class="octicon icon-pause" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="2" width="3" height="12" rx="1"></rect>
+              <rect x="9" y="2" width="3" height="12" rx="1"></rect>
+            </svg>
+          </button>
+          <a data-target="animated-image.openButton" aria-label="Open how_dvc_works in new window" class="AnimatedImagePlayer-button" href="https://dvc.org/img/flow.gif" target="_blank">
+            <svg aria-hidden="true" class="octicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+              <path fill-rule="evenodd" d="M10.604 1h4.146a.25.25 0 01.25.25v4.146a.25.25 0 01-.427.177L13.03 4.03 9.28 7.78a.75.75 0 01-1.06-1.06l3.75-3.75-1.543-1.543A.25.25 0 0110.604 1zM3.75 2A1.75 1.75 0 002 3.75v8.5c0 .966.784 1.75 1.75 1.75h8.5A1.75 1.75 0 0014 12.25v-3.5a.75.75 0 00-1.5 0v3.5a.25.25 0 01-.25.25h-8.5a.25.25 0 01-.25-.25v-8.5a.25.25 0 01.25-.25h3.5a.75.75 0 000-1.5h-3.5z"></path>
+            </svg>
+          </a>
+        </span>
+      </span></animated-image></p>
+<p dir="auto"><a href="https://dvc.org/doc/start/data-management/data-pipelines" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DVC 管道</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">（计算图）将代码和数据连接在一起。它们指定了生成模型所需的所有步骤：输入依赖项，包括代码、数据、要运行的命令；并保存输出信息。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最后但并非最不重要的一点是，</font></font><a href="https://dvc.org/doc/start/experiments" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DVC 实验版本控制</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">可让您准备和运行大量实验。他们的结果可以根据超参数和指标进行过滤和比较，并通过多个图进行可视化。</font></font></p>
+<a name="user-content-id1"></a>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">VS 代码扩展</font></font></h2><a id="user-content-vs-code-extension" class="anchor" aria-label="永久链接：VS 代码扩展" href="#vs-code-extension"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://marketplace.visualstudio.com/items?itemName=Iterative.dvc" rel="nofollow"><img alt="VS 代码扩展" src="https://camo.githubusercontent.com/3daaa337cd713b3bee35ca81381ef1473b2d6f5ed3e0f96283c7687c73b59def/68747470733a2f2f696d672e736869656c64732e696f2f76697375616c2d73747564696f2d6d61726b6574706c6163652f762f4974657261746976652e6476633f636f6c6f723d626c7565266c6162656c3d5653436f6465266c6f676f3d76697375616c73747564696f636f6465266c6f676f436f6c6f723d626c7565" data-canonical-src="https://img.shields.io/visual-studio-marketplace/v/Iterative.dvc?color=blue&amp;label=VSCode&amp;logo=visualstudiocode&amp;logoColor=blue" style="max-width: 100%;"></a></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">要直接从 VS Code IDE 使用 DVC 作为 GUI，请</font><font style="vertical-align: inherit;">从 Marketplace安装</font></font><a href="https://marketplace.visualstudio.com/items?itemName=Iterative.dvc" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DVC 扩展</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。它目前具有实验跟踪和数据管理的功能，更多功能（数据管道支持等）即将推出！</font></font></p>
+<p dir="auto"><animated-image data-catalyst=""><a target="_blank" rel="noopener noreferrer nofollow" href="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" data-target="animated-image.originalLink"><img alt="VS Code 的 DVC 扩展" src="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" style="max-width: 100%; display: inline-block;" data-target="animated-image.originalImage"></a>
+      <span class="AnimatedImagePlayer" data-target="animated-image.player" hidden="">
+        <a data-target="animated-image.replacedLink" class="AnimatedImagePlayer-images" href="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" target="_blank">
+          
+        <span data-target="animated-image.imageContainer">
+            <img data-target="animated-image.replacedImage" alt="DVC Extension for VS Code" class="AnimatedImagePlayer-animatedImage" src="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" style="display: block; opacity: 1;">
+          <canvas class="AnimatedImagePlayer-stillImage" aria-hidden="true" width="800" height="450"></canvas></span></a>
+        <button data-target="animated-image.imageButton" class="AnimatedImagePlayer-images" tabindex="-1" aria-label="Play DVC Extension for VS Code" hidden=""></button>
+        <span class="AnimatedImagePlayer-controls" data-target="animated-image.controls" hidden="">
+          <button data-target="animated-image.playButton" class="AnimatedImagePlayer-button" aria-label="Play DVC Extension for VS Code">
+            <svg aria-hidden="true" focusable="false" class="octicon icon-play" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 13.5427V2.45734C4 1.82607 4.69692 1.4435 5.2295 1.78241L13.9394 7.32507C14.4334 7.63943 14.4334 8.36057 13.9394 8.67493L5.2295 14.2176C4.69692 14.5565 4 14.1739 4 13.5427Z">
+            </path></svg>
+            <svg aria-hidden="true" focusable="false" class="octicon icon-pause" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="2" width="3" height="12" rx="1"></rect>
+              <rect x="9" y="2" width="3" height="12" rx="1"></rect>
+            </svg>
+          </button>
+          <a data-target="animated-image.openButton" aria-label="Open DVC Extension for VS Code in new window" class="AnimatedImagePlayer-button" href="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" target="_blank">
+            <svg aria-hidden="true" class="octicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+              <path fill-rule="evenodd" d="M10.604 1h4.146a.25.25 0 01.25.25v4.146a.25.25 0 01-.427.177L13.03 4.03 9.28 7.78a.75.75 0 01-1.06-1.06l3.75-3.75-1.543-1.543A.25.25 0 0110.604 1zM3.75 2A1.75 1.75 0 002 3.75v8.5c0 .966.784 1.75 1.75 1.75h8.5A1.75 1.75 0 0014 12.25v-3.5a.75.75 0 00-1.5 0v3.5a.25.25 0 01-.25.25h-8.5a.25.25 0 01-.25-.25v-8.5a.25.25 0 01.25-.25h3.5a.75.75 0 000-1.5h-3.5z"></path>
+            </svg>
+          </a>
+        </span>
+      </span></animated-image></p>
+<blockquote><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+注意：您必须在系统上单独安装核心 DVC（如下所述）。如果需要，扩展将指导您。</font></font></blockquote>
+<a name="user-content-installation"></a>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">安装</font></font></h2><a id="user-content-installation" class="anchor" aria-label="永久链接：安装" href="#installation"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">有多种方式安装 DVC： 在 VS Code 中；使用</font></font><code>snap</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，</font></font><code>choco</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，</font></font><code>brew</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，</font></font><code>conda</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，</font></font><code>pip</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">;或使用特定于操作系统的软件包。完整说明可</font></font><a href="https://dvc.org/doc/get-started/install" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在此处获取</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></p>
+<a name="user-content-snapcraft-linux"></a>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Snapcraft (Linux)</font></font></h3><a id="user-content-snapcraft-linux" class="anchor" aria-label="永久链接：Snapcraft (Linux)" href="#snapcraft-linux"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://snapcraft.io/dvc" rel="nofollow"><img alt="Snapcraft" src="https://camo.githubusercontent.com/0a898e4a3d84a2ef16c587236f22d4b241f12532606f14dc06f27c1886e776d9/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f736e61702d696e7374616c6c2d3832424541302e7376673f6c6f676f3d736e61706372616674" data-canonical-src="https://img.shields.io/badge/snap-install-82BEA0.svg?logo=snapcraft" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>snap install dvc --classic</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="snap install dvc --classic" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">这对应于最新的标记版本。添加</font></font><code>--beta</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最新标记的候选版本或</font></font><code>--edge</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最新</font></font><code>main</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">版本。</font></font></p>
+<a name="user-content-chocolatey-windows"></a>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">巧克力味（Windows）</font></font></h3><a id="user-content-chocolatey-windows" class="anchor" aria-label="永久链接：巧克力 (Windows)" href="#chocolatey-windows"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://chocolatey.org/packages/dvc" rel="nofollow"><img alt="巧克力味" src="https://camo.githubusercontent.com/b945daacb7f0c1e0c48903fa1a4a60af6e50da523f40b1775695a572a4b656ba/68747470733a2f2f696d672e736869656c64732e696f2f63686f636f6c617465792f762f6476633f6c6162656c3d63686f636f" data-canonical-src="https://img.shields.io/chocolatey/v/dvc?label=choco" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>choco install dvc</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="choco install dvc" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<a name="user-content-brew-mac-os"></a>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">酿造（Mac 操作系统）</font></font></h3><a id="user-content-brew-mac-os" class="anchor" aria-label="永久链接：Brew（Mac 操作系统）" href="#brew-mac-os"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://formulae.brew.sh/formula/dvc" rel="nofollow"><img alt="自制" src="https://camo.githubusercontent.com/45a6a79188da997b91b90c51bf832089f052b99c995ff240a650ab7175e3eb8b/68747470733a2f2f696d672e736869656c64732e696f2f686f6d65627265772f762f6476633f6c6162656c3d62726577" data-canonical-src="https://img.shields.io/homebrew/v/dvc?label=brew" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>brew install dvc</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="brew install dvc" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<a name="user-content-anaconda-any-platform"></a>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Anaconda（任何平台）</font></font></h3><a id="user-content-anaconda-any-platform" class="anchor" aria-label="永久链接：Anaconda（任何平台）" href="#anaconda-any-platform"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://anaconda.org/conda-forge/dvc" rel="nofollow"><img alt="康达锻造" src="https://camo.githubusercontent.com/920e3217cc0ffb61ac9ac639cd9377eeca8a3d9c3697971585ba0fea1850a7b7/68747470733a2f2f696d672e736869656c64732e696f2f636f6e64612f762f636f6e64612d666f7267652f6476632e7376673f6c6162656c3d636f6e6461266c6f676f3d636f6e64612d666f726765" data-canonical-src="https://img.shields.io/conda/v/conda-forge/dvc.svg?label=conda&amp;logo=conda-forge" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>conda install -c conda-forge mamba <span class="pl-c"><span class="pl-c">#</span> installs much faster than conda</span>
+mamba install -c conda-forge dvc</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="conda install -c conda-forge mamba # installs much faster than conda
+mamba install -c conda-forge dvc" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">根据计划用于保存和共享数据的远程存储类型，您可能需要安装可选依赖项：dvc-s3、dvc-azure、dvc-gdrive、dvc-gs、dvc-oss、dvc-ssh。</font></font></p>
+<a name="user-content-pypi-python"></a>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">PyPI（Python）</font></font></h3><a id="user-content-pypi-python" class="anchor" aria-label="永久链接：PyPI (Python)" href="#pypi-python"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://pypi.org/project/dvc" rel="nofollow"><img alt="皮伊" src="https://camo.githubusercontent.com/bfb4e41fb4f3ee133a761a16296e6dae1da8f56681e0fd54a4069eee64add0c3/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f6476632e7376673f6c6162656c3d706970266c6f676f3d50795049266c6f676f436f6c6f723d7768697465" data-canonical-src="https://img.shields.io/pypi/v/dvc.svg?label=pip&amp;logo=PyPI&amp;logoColor=white" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>pip install dvc</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="pip install dvc" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">根据您计划用于保存和共享数据的远程存储类型，您可能需要指定可选依赖项之一：</font></font><code>s3</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">、</font></font><code>gs</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">、</font></font><code>azure</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">、</font></font><code>oss</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">、</font></font><code>ssh</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。或者</font></font><code>all</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">将它们全部包括在内。该命令应如下所示：（</font></font><code>pip install 'dvc[s3]'</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在本例中，AWS S3 依赖项</font></font><code>boto3</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">将自动安装）。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">要安装开发版本，请运行：</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>pip install git+git://github.com/iterative/dvc</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="pip install git+git://github.com/iterative/dvc" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<a name="user-content-package-platform-specific"></a>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">包（特定于平台）</font></font></h3><a id="user-content-package-platform-specific" class="anchor" aria-label="永久链接：包（特定于平台）" href="#package-platform-specific"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://dvc.org/doc/install" rel="nofollow"><img alt="deb|pkg|rpm|exe" src="https://camo.githubusercontent.com/ccabd4c7fba32a335d8c4b994ca7ca91251a8d2700dfa55b7cfc873b721ed211/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6465627c706b677c72706d7c6578652d626c7565" data-canonical-src="https://img.shields.io/badge/deb|pkg|rpm|exe-blue" style="max-width: 100%;"></a></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">提供适用于 Linux、Windows 和 Mac 的独立软件包。最新版本的软件包可以在 GitHub</font></font><a href="https://github.com/iterative/dvc/releases"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">发布页面</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">上找到。</font></font></p>
+<a name="user-content-ubuntu-debian-deb"></a>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Ubuntu / Debian (deb)</font></font></h4><a id="user-content-ubuntu--debian-deb" class="anchor" aria-label="永久链接：Ubuntu / Debian (deb)" href="#ubuntu--debian-deb"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>sudo wget https://dvc.org/deb/dvc.list -O /etc/apt/sources.list.d/dvc.list
+wget -qO - https://dvc.org/deb/iterative.asc <span class="pl-k">|</span> sudo apt-key add -
+sudo apt update
+sudo apt install dvc</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="sudo wget https://dvc.org/deb/dvc.list -O /etc/apt/sources.list.d/dvc.list
+wget -qO - https://dvc.org/deb/iterative.asc | sudo apt-key add -
+sudo apt update
+sudo apt install dvc" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<a name="user-content-fedora-centos-rpm"></a>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Fedora/CentOS (rpm)</font></font></h4><a id="user-content-fedora--centos-rpm" class="anchor" aria-label="永久链接：Fedora / CentOS (rpm)" href="#fedora--centos-rpm"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>sudo wget https://dvc.org/rpm/dvc.repo -O /etc/yum.repos.d/dvc.repo
+sudo rpm --import https://dvc.org/rpm/iterative.asc
+sudo yum update
+sudo yum install dvc</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="sudo wget https://dvc.org/rpm/dvc.repo -O /etc/yum.repos.d/dvc.repo
+sudo rpm --import https://dvc.org/rpm/iterative.asc
+sudo yum update
+sudo yum install dvc" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<a name="user-content-contributing"></a>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">贡献</font></font></h2><a id="user-content-contributing" class="anchor" aria-label="永久链接：贡献" href="#contributing"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://codeclimate.com/github/iterative/dvc" rel="nofollow"><img alt="气候规范" src="https://camo.githubusercontent.com/c98b067f197032eaaf4502e78a2dfa4495a9886aad4d748be587ddd499004466/68747470733a2f2f636f6465636c696d6174652e636f6d2f6769746875622f6974657261746976652f6476632f6261646765732f6770612e737667" data-canonical-src="https://codeclimate.com/github/iterative/dvc/badges/gpa.svg" style="max-width: 100%;">
+</a></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">欢迎贡献！请参阅我们的</font></font><a href="https://dvc.org/doc/user-guide/contributing/core" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">贡献指南</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">了解更多详细信息。感谢我们所有的贡献者！</font></font></p>
+<p dir="auto"><a href="https://github.com/iterative/dvc/graphs/contributors"><img alt="贡献者" src="https://camo.githubusercontent.com/9de9dc36f3d9c5dd22c9df6b257b87e00459028901d0406c7d2abc52d3c15b98/68747470733a2f2f636f6e747269622e726f636b732f696d6167653f7265706f3d6974657261746976652f647663" data-canonical-src="https://contrib.rocks/image?repo=iterative/dvc" style="max-width: 100%;"></a></p>
+<a name="user-content-community-and-support"></a>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">社区和支持</font></font></h2><a id="user-content-community-and-support" class="anchor" aria-label="永久链接：社区和支持" href="#community-and-support"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<ul dir="auto">
+<li><a href="https://twitter.com/DVCorg" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">推特</font></font></a></li>
+<li><a href="https://discuss.dvc.org/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">论坛</font></font></a></li>
+<li><a href="https://dvc.org/chat" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">不和谐聊天</font></font></a></li>
+<li><a href="mailto:support@dvc.org"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">电子邮件</font></font></a></li>
+<li><a href="https://sweedom.us10.list-manage.com/subscribe/post?u=a08bf93caae4063c4e6a351f6&amp;id=24c0ecc49a" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">邮件列表</font></font></a></li>
+</ul>
+<a name="user-content-copyright"></a>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">版权</font></font></h2><a id="user-content-copyright" class="anchor" aria-label="永久链接：版权所有" href="#copyright"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">该项目根据 Apache 许可证版本 2.0 分发（请参阅项目根目录中的 LICENSE 文件）。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">通过向该项目提交拉取请求，您同意根据 Apache 许可证版本 2.0 向该项目许可您的贡献。</font></font></p>
+<a name="user-content-citation"></a>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">引文</font></font></h2><a id="user-content-citation" class="anchor" aria-label="永久链接：引文" href="#citation"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://doi.org/10.5281/zenodo.3677553" rel="nofollow"><img alt="DOI" src="https://camo.githubusercontent.com/0350534562328e569f6c577f31a818ca777d9cbdd38f3fb5c1c80d9e6f0fea7e/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f444f492d31302e353238312f7a656e6f646f2e333637373535332d626c75652e737667" data-canonical-src="https://img.shields.io/badge/DOI-10.5281/zenodo.3677553-blue.svg" style="max-width: 100%;">
+</a></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">迭代，</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DVC：数据版本控制 - 用于数据和模型的 Git</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> (2020)
+ </font></font><a href="https://doi.org/10.5281/zenodo.3677553" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DOI:10.5281/zenodo.012345</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Barrak, A.、Eghan, EE 和 Adams, B. 《</font></font><a href="https://mcis.cs.queensu.ca/publications/2021/saner.pdf" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">关于 ML 管道和源代码的共同演化 - DVC 项目的实证研究》</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，第 28 届 IEEE 软件分析、演化和再工程国际会议论文集，SANER 2021 .美国夏威夷。</font></font></p>
+
+</article></div>
