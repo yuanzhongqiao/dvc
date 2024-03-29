@@ -101,27 +101,7 @@
       <span class="AnimatedImagePlayer" data-target="animated-image.player" hidden="">
         <a data-target="animated-image.replacedLink" class="AnimatedImagePlayer-images" href="https://dvc.org/img/flow.gif" target="_blank">
           
-        <span data-target="animated-image.imageContainer">
-            <img data-target="animated-image.replacedImage" alt="how_dvc_works" class="AnimatedImagePlayer-animatedImage" src="https://camo.githubusercontent.com/ab63e023438880d76200b9eb966f8acf0a7e6bf59e23a162e38caceeb20ae324/68747470733a2f2f6476632e6f72672f696d672f666c6f772e676966" style="display: block; opacity: 1;">
-          <canvas class="AnimatedImagePlayer-stillImage" aria-hidden="true" width="814" height="326"></canvas></span></a>
-        <button data-target="animated-image.imageButton" class="AnimatedImagePlayer-images" tabindex="-1" aria-label="Play how_dvc_works" hidden=""></button>
-        <span class="AnimatedImagePlayer-controls" data-target="animated-image.controls" hidden="">
-          <button data-target="animated-image.playButton" class="AnimatedImagePlayer-button" aria-label="Play how_dvc_works">
-            <svg aria-hidden="true" focusable="false" class="octicon icon-play" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 13.5427V2.45734C4 1.82607 4.69692 1.4435 5.2295 1.78241L13.9394 7.32507C14.4334 7.63943 14.4334 8.36057 13.9394 8.67493L5.2295 14.2176C4.69692 14.5565 4 14.1739 4 13.5427Z">
-            </path></svg>
-            <svg aria-hidden="true" focusable="false" class="octicon icon-pause" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="2" width="3" height="12" rx="1"></rect>
-              <rect x="9" y="2" width="3" height="12" rx="1"></rect>
-            </svg>
-          </button>
-          <a data-target="animated-image.openButton" aria-label="Open how_dvc_works in new window" class="AnimatedImagePlayer-button" href="https://dvc.org/img/flow.gif" target="_blank">
-            <svg aria-hidden="true" class="octicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-              <path fill-rule="evenodd" d="M10.604 1h4.146a.25.25 0 01.25.25v4.146a.25.25 0 01-.427.177L13.03 4.03 9.28 7.78a.75.75 0 01-1.06-1.06l3.75-3.75-1.543-1.543A.25.25 0 0110.604 1zM3.75 2A1.75 1.75 0 002 3.75v8.5c0 .966.784 1.75 1.75 1.75h8.5A1.75 1.75 0 0014 12.25v-3.5a.75.75 0 00-1.5 0v3.5a.25.25 0 01-.25.25h-8.5a.25.25 0 01-.25-.25v-8.5a.25.25 0 01.25-.25h3.5a.75.75 0 000-1.5h-3.5z"></path>
-            </svg>
-          </a>
-        </span>
-      </span></animated-image></p>
+       
 <p dir="auto"><a href="https://dvc.org/doc/start/data-management/data-pipelines" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DVC 管道</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">（计算图）将代码和数据连接在一起。它们指定了生成模型所需的所有步骤：输入依赖项，包括代码、数据、要运行的命令；并保存输出信息。</font></font></p>
 <p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最后但并非最不重要的一点是，</font></font><a href="https://dvc.org/doc/start/experiments" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DVC 实验版本控制</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">可让您准备和运行大量实验。他们的结果可以根据超参数和指标进行过滤和比较，并通过多个图进行可视化。</font></font></p>
 <a name="user-content-id1"></a>
@@ -131,28 +111,7 @@
 <p dir="auto"><animated-image data-catalyst=""><a target="_blank" rel="noopener noreferrer nofollow" href="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" data-target="animated-image.originalLink"><img alt="VS Code 的 DVC 扩展" src="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" style="max-width: 100%; display: inline-block;" data-target="animated-image.originalImage"></a>
       <span class="AnimatedImagePlayer" data-target="animated-image.player" hidden="">
         <a data-target="animated-image.replacedLink" class="AnimatedImagePlayer-images" href="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" target="_blank">
-          
-        <span data-target="animated-image.imageContainer">
-            <img data-target="animated-image.replacedImage" alt="DVC Extension for VS Code" class="AnimatedImagePlayer-animatedImage" src="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" style="display: block; opacity: 1;">
-          <canvas class="AnimatedImagePlayer-stillImage" aria-hidden="true" width="800" height="450"></canvas></span></a>
-        <button data-target="animated-image.imageButton" class="AnimatedImagePlayer-images" tabindex="-1" aria-label="Play DVC Extension for VS Code" hidden=""></button>
-        <span class="AnimatedImagePlayer-controls" data-target="animated-image.controls" hidden="">
-          <button data-target="animated-image.playButton" class="AnimatedImagePlayer-button" aria-label="Play DVC Extension for VS Code">
-            <svg aria-hidden="true" focusable="false" class="octicon icon-play" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 13.5427V2.45734C4 1.82607 4.69692 1.4435 5.2295 1.78241L13.9394 7.32507C14.4334 7.63943 14.4334 8.36057 13.9394 8.67493L5.2295 14.2176C4.69692 14.5565 4 14.1739 4 13.5427Z">
-            </path></svg>
-            <svg aria-hidden="true" focusable="false" class="octicon icon-pause" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="2" width="3" height="12" rx="1"></rect>
-              <rect x="9" y="2" width="3" height="12" rx="1"></rect>
-            </svg>
-          </button>
-          <a data-target="animated-image.openButton" aria-label="Open DVC Extension for VS Code in new window" class="AnimatedImagePlayer-button" href="https://raw.githubusercontent.com/iterative/vscode-dvc/main/extension/docs/overview.gif" target="_blank">
-            <svg aria-hidden="true" class="octicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-              <path fill-rule="evenodd" d="M10.604 1h4.146a.25.25 0 01.25.25v4.146a.25.25 0 01-.427.177L13.03 4.03 9.28 7.78a.75.75 0 01-1.06-1.06l3.75-3.75-1.543-1.543A.25.25 0 0110.604 1zM3.75 2A1.75 1.75 0 002 3.75v8.5c0 .966.784 1.75 1.75 1.75h8.5A1.75 1.75 0 0014 12.25v-3.5a.75.75 0 00-1.5 0v3.5a.25.25 0 01-.25.25h-8.5a.25.25 0 01-.25-.25v-8.5a.25.25 0 01.25-.25h3.5a.75.75 0 000-1.5h-3.5z"></path>
-            </svg>
-          </a>
-        </span>
-      </span></animated-image></p>
+         
 <blockquote><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
 注意：您必须在系统上单独安装核心 DVC（如下所述）。如果需要，扩展将指导您。</font></font></blockquote>
 <a name="user-content-installation"></a>
